@@ -1,17 +1,9 @@
 import psycopg2
+from util.time_parser import DateHandler
 
 class DatabaseManager:
     # CONSTANTS
     conn_string = "host='localhost' dbname='TwitterDB' user='postgres' password='261286'"
-    ID = 0
-    COUNTRY = 1
-    DATE_START = 2
-    TIME_START  = 3
-    DURATION = 4
-    CHANNEL_NAME = 5
-    PROGRAM_NAME = 6
-    DESCRIPTOR = 7
-    
     
     #DEFINES
     def __init__(self):
@@ -20,31 +12,55 @@ class DatabaseManager:
      
         # get a connection, if a connect cannot be made an exception will be raised here
         self.conn = psycopg2.connect(self.conn_string)
-    
-    def getConnection(self):
-        # conn.cursor will return a cursor object, you can use this cursor to perform queries
-        cursor = self.conn.cursor()
-        return cursor
+        self.cursor = self.conn.cursor()
     
     def select(self, table):
-        cursor = self.getConnection()
-     
         # execute our Query
-        cursor.execute("SELECT * FROM "+table)
+        self.cursor.execute("SELECT * FROM "+table)
         
         # retrieve the records from the database
-        return cursor.fetchall()
+        return self.cursor.fetchall()
     
     def filterEPGByChannelName(self,channel_name):
-        list_epg = self.select("epg")
-        rowlist = []
-        for row in list_epg:
-            if row[self.CHANNEL_NAME].lower() == channel_name.lower():
-                rowlist.append(row)
-                #print "Channel: %s - Program: %s " %(row[data.CHANNEL_NAME], row[data.PROGRAM_NAME])
-        
-        return rowlist
+        self.cursor.execute("""
+        SELECT 
+          broadcaster.name, program.name, epg_event.descriptor 
+        FROM 
+          public.epg_event, 
+          public.program, 
+          public.broadcaster
+        WHERE 
+          program.id = epg_event.program AND broadcaster.id = program.broadcaster AND
+          broadcaster.name = '%s';
+        """ %(channel_name)
+        )
+        list_epg = self.cursor.fetchall()
+        return list_epg
 
+    def filterEPGByChannelNameDateTime(self, channel_name, date_time):
+        date = DateHandler(date_time)
+        query = """ 
+          SELECT 
+          epg_event.startdate, epg_event.starttime, broadcaster.name, program.name, epg_event.descriptor
+        FROM 
+          public.epg_event, 
+          public.program, 
+          public.broadcaster
+        WHERE 
+          program.id = epg_event.program AND broadcaster.id = program.broadcaster AND
+          broadcaster.name = '%s' AND
+          epg_event.startdate = '%s'
+        ORDER BY
+          epg_event.starttime    
+
+        """ %(channel_name, date.getDate())
+        self.cursor.execute(query)       
+        return self.cursor.fetchall()
+    
+data = DatabaseManager()
+list_epg = data.filterEPGByChannelNameDateTime('Globo', '29/10/2013 - 16:00:00')
+for epg in list_epg:
+    print epg[0], epg[1], epg[2], epg[3], epg[4]
 #print "Qnt of programs for SBT: %d"  %(len(data.filterEPGByChannelName("SBT")))
 #print "Qnt of programs for Globo: %d"  %(len(data.filterEPGByChannelName("Globo")))
 #print "Qnt of programs for Rede Vida: %d"  %(len(data.filterEPGByChannelName("RedeVida")))
