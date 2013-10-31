@@ -6,8 +6,9 @@ current_date, current_hour = util.initialMessage()
 print ' ---------------- '
 # first looks for a program in current time
 
-programToCheck =  util.getProgramByChannelAndDate("Globo", current_date, current_hour)
-print 'Found: %s. Starts at %s - %s with duration of %s' %(programToCheck[6], programToCheck[2], programToCheck[3], programToCheck[4])
+#programToCheck =  util.getProgramByChannelAndDate("Globo", current_date, current_hour)
+#print 'Found: %s. Starts at %s - %s with duration of %s' %(programToCheck[6], programToCheck[2], programToCheck[3], programToCheck[4])
+programToCheck = ['29/10/2013','01:05:00','01:35:00']
 hashTagsList = util.getHashTagsForEPGRow(programToCheck)
 
 for tweet in hashTagsList:

@@ -18,6 +18,16 @@ class TwitterRest:
         tweets_result = search_result['statuses']
         return tweets_result
     
+    def seachByLangAndDate(self, language, date, qnt, query):
+        search_result = self.twitter.search(q=query.decode('utf-8'), count=qnt, lang=language, until=date)
+        tweets_result = search_result['statuses']
+        return tweets_result
+    
+    def seachByLangA(self, language, date, qnt, query):
+        search_result = self.twitter.search(q=query.decode('utf-8'), count=qnt, lang=language, until=date)
+        tweets_result = search_result['statuses']
+        return tweets_result
+    
     def searchByGeo(self, local, distance, qnt, query):
         location, (lat, lon) = geo_location.getGeocode(local)
         print 'Local: %s - lat:%s - lon: %s' %(location, lat, lon)

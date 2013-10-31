@@ -30,13 +30,13 @@ def getProgramByChannelAndDate(channel_name, startDate, startTime):
 
 def getHashTagsForEPGRow(epgRow):
     timeLineTweets = TwitterRest().getTimeLine()
-    programDateTimeStarts = '%s - %s' %(epgRow[dbHandler.DATE_START], epgRow[dbHandler.TIME_START])
-    print 'looking for tweets from %s with duration of %s in a interval of 30 minutes more and less.' %(programDateTimeStarts, epgRow[dbHandler.DURATION])
+    programDateTimeStarts = '%s - %s' %(epgRow[0], epgRow[1])
+    print 'looking for tweets from %s with duration of %s in a interval of 30 minutes more and less.' %(programDateTimeStarts, epgRow[2])
     listOfHashs = []
     for tweet in timeLineTweets:
         date = DateHandler(tweet['created_at'])
         givenDateTime = '%s - %s' %(date.getDate(), date.getTime())
-        if fitTime(programDateTimeStarts, epgRow[dbHandler.DURATION], givenDateTime, 30):
+        if fitTime(programDateTimeStarts, epgRow[2], givenDateTime, 30):
             if '#' in  tweet['text'].encode('utf-8'):
                 listOfHashs.append(tweet) 
            
