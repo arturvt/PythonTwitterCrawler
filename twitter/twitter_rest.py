@@ -13,6 +13,11 @@ class TwitterRest:
         # self.twitter = Twython(self.APP_KEY, access_token=self.ACCESS_TOKEN)
         self.twitter = Twython(self.APP_KEY, self.APP_SECRET, self.OAUTH_TOKEN, self.OAUTH_TOKEN_SECRET)
     
+    def search(self, query):
+        search_result = self.twitter.search(q=query.decode('utf-8'), count=2000)
+        tweets_result = search_result['statuses']
+        return tweets_result
+    
     def seachByLang(self, lg, qnt, query):
         search_result = self.twitter.search(q=query.decode('utf-8'), count=qnt, lang=lg)
         tweets_result = search_result['statuses']
