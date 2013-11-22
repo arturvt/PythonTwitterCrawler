@@ -1,17 +1,27 @@
 from twitter_rest import TwitterRest
-from util.time_parser import DateHandler, fitTime
+from util.time_parser import DateHandler, fitTime, getTwitterTime,\
+    getWindowsTime
+from fileinput import filename
+import os
 
 
 
 twt = TwitterRest()
 # tests the Rest Search api
-def test01(startDate, startTime, durationTime, query):
     
-    tweets_result  = twt.seachByLangAndDate('pt','2013-11-2',  200, query)
+
+def searchForTweetsByDateAndDuration(startDate, startTime, durationTime, query, program_name):
+    
+    print 'Looking for', startDate, ":",startTime, 'with duration:', durationTime, 'Query=', query
+    tweets_result  = twt.seachByLangAndDate('pt',getTwitterTime(startDate),  200, query)
     hash_tags = []
     rts = []
     filtered_tweets = []
-    filename = "C:\\Users\\avt\\Dropbox\\Mestrado\\workspace\\TweetResults\\01_11_2013_%s.txt" %(query)
+    folderName = "C:\\Users\\avt\\Dropbox\\Mestrado\\workspace\\TweetResults\\%s\\" %(program_name.decode('utf-8'))
+    if not os.path.exists(folderName):
+        os.makedirs(folderName)
+    filename = "%s\\%s_%s.txt" %(folderName, getWindowsTime(startDate),query)
+    print 'creating file: ', filename
     file_txt = open(filename, "w")
     for tweet in tweets_result:
         date = DateHandler(tweet['created_at'])
@@ -39,8 +49,8 @@ def test01(startDate, startTime, durationTime, query):
     print 'RTs qnt: %d'  %(len(rts))
     print 'Hashs qnt: %d'  %(len(hash_tags))
     print ' -------------------------- '
-    for hashs in hash_tags:
-        print hashs        
+    # for hashs in hash_tags:
+    #     print hashs        
 
 
 # tests the home timeline api
@@ -69,8 +79,9 @@ def test03(query):
 print ' ----- beginning -----'
 
 #test03('Programa do Jo')
-test01('1/11/2013', '01:00:00', '01:10:00', '#ProgramaDoJo')
-test01('1/11/2013', '01:00:00', '01:10:00', '#JoSoares')
+#searchForTweetsByDateAndDuration('21/11/2013', '21:45:00', '02:35:00', '#TheVoice', 'The Voice Brasil')
+#searchForTweetsByDateAndDuration('21/11/2013', '21:45:00', '02:35:00', '#TheVoiceBrasil', 'The Voice Brasil')
+#searchForTweetsByDateAndDuration('21/11/2013', '21:45:00', '02:35:00', '#VBR', 'The Voice Brasil')
 #test01('31/10/2013', '22:30:00', '01:10:00', '#VBR')
 #test01('30/10/2013', '21:50:00', '01:10:00', '#botecodoratinho')
 #test01('31/10/2013', '21:50:00', '01:10:00', '#botecodoratinho')

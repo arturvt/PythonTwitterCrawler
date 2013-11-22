@@ -18,6 +18,12 @@ class DateHandler():
         
         return '%s/%s/%s' %(day_str, month_str,year_str)
 
+    def getTwitterPatternDate(self):
+        year_str = str(self.dt.year)
+        month_str = str(self.dt.month)
+        day_str = str(self.dt.day)
+        
+        return '%s-%s-%s' %(year_str, month_str, day_str)
     
     def getTime(self):
         if self.dt.hour < 10:
@@ -48,9 +54,23 @@ class DateHandler():
             return True
         return False   
         
+# takes the Original formate: D/Y/M and changes to y-m-d plus one day        
+def getTwitterTime(timedefault):
+    day, month, year = timedefault.split('/')
+    if '20' in year:
+        year = year.replace('20', '') 
+    formated = '%s/%s/%s' %(day, month, year)
+    initial = datetime.strptime(formated, "%d/%m/%y")
+    endDate = initial + timedelta(days=1)
+    newvalue = '%s-%s-%s' %(endDate.year, endDate.month, endDate.day)
+    return newvalue
+
+def getWindowsTime(timeDefault):
+    day, month, year = timeDefault.split('/')
+    return '%s-%s-%s' %(day, month, year)
+    
 # This function must check if a given date and time are inside a period datetime. If the tolerance is bigger than 0 means that the period time is dilated.
 def fitTime(initialDateTime, durationTime,  givenTime, toleranceInMinutes):
-   
     #gets the initial timestamp
     initial_timestamp = time.mktime(datetime.strptime(initialDateTime, "%d/%m/%Y - %H:%M:%S").timetuple())
     
@@ -77,6 +97,7 @@ def fitTime(initialDateTime, durationTime,  givenTime, toleranceInMinutes):
      
     return False
 
+getTwitterTime('18/11/13')
 # Uses...
 
 #twitter_time = 'Tue Oct 22 22:08:29 +0000 2013'

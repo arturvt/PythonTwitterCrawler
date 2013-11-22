@@ -1,8 +1,10 @@
 from datetime import datetime
-from database_access import DatabaseManager
 from twitter_rest import TwitterRest
 from time_parser import DateHandler
 from time_parser import fitTime
+from db.database_access import DatabaseManager
+from twitter.twitter_test import searchForTweetsByDateAndDuration
+import re
 
 dbHandler = DatabaseManager()
 now = datetime.now()
@@ -16,17 +18,19 @@ def initialMessage():
 # looks for a single program that fits all arguments
 def getProgramByChannelAndDate(channel_name, startDate, startTime):
     print "Looking for a program at channel %s starting at %s - %s" %(channel_name, startDate, startTime)
-    # first get the lsit of programs of the day
-    listByChannel = dbHandler.filterEPGByChannelName(channel_name)
-    
+
+    # first get the list of programs of the day
+    # Returns in this order:  epg_event.startdate, epg_event.starttime, epg_event.durationtime, broadcaster.name, program.name, epg_event.descriptor
+    listByChannel = dbHandler.filterEPGByChannelNameDateTime(channel_name, startDate)
+
     givenDateTime = '%s - %s' %(startDate, startTime)
     # search for a program in the given time
     for row in listByChannel:
-        programDateTimeStarts = '%s - %s' %(row[dbHandler.DATE_START], row[dbHandler.TIME_START])
+        programDateTimeStarts = '%s - %s' %(row[0], row[1])
         # checks if there is some program in exactly current time.
-        if fitTime(programDateTimeStarts, row[dbHandler.DURATION], givenDateTime, 0):
+        if fitTime(programDateTimeStarts, row[2], givenDateTime, 0):
             return row
-    return "Did't found...."
+    return
 
 def getHashTagsForEPGRow(epgRow):
     timeLineTweets = TwitterRest().getTimeLine()
@@ -41,4 +45,28 @@ def getHashTagsForEPGRow(epgRow):
                 listOfHashs.append(tweet) 
            
     return listOfHashs
+           
+def getHashTagsForProgram(program_name):
+    listOfHash = dbHandler.getHashTagsPerProgram(program_name)
+    if listOfHash is None:
+        print 'No hashtags found.'
+        return
+    else:
+        chars = ['(', ')', ',', '\'', '?']
+        listOfHash_formated = []
+        for hash_name in listOfHash:
+            hash_name = str(hash_name)
+            hash_name = re.sub('[%s]' % ''.join(chars), '', hash_name)
+            listOfHash_formated.append(hash_name)
             
+        return listOfHash_formated
+
+def getTweetsRelatedToProgram(program_name, start_date, start_time, duration_time):
+    #gets the hashtags for given program
+    hashTags_list = getHashTagsForProgram(program_name)
+    
+    for hash_name in hashTags_list:
+        print 'Searching for: ', hash_name
+        searchForTweetsByDateAndDuration(start_date, start_time, duration_time, hash_name, program_name)
+    
+    print 'Finished. Number of hashs: ', len(hashTags_list)
