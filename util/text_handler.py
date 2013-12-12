@@ -20,6 +20,7 @@ def extractFormattedTweet(tweet):
 def fixWords(text):
     matcher = re.compile(r'([a-z])\1*')
     words = []
+    
     #print ('\n'.join(match.group() for match in matcher.finditer(text)))
     for match in matcher.finditer(text.lower()):
         if len(match.group()) > 2:
@@ -30,17 +31,34 @@ def fixWords(text):
             
             words.append(match.group())
     
-    return (text, words)
+    return text
 
+def lexicAnalyzer(text):
+    text = fixWords(text)
+    text = text.replace('amu', 'amo')
+    text = text.replace('rs', 'risos')
+    text = text.replace('tb', 'tbm')
+    text = text.replace('td', 'tudo')
+    text = text.replace('tdb', 'tudo bem')
+    text = text.replace('hj', 'hoje')
+    return text
 
-'''
 exemplo1 = 'Encontro, amoooooooooooooooo!!!!!! #EncontroFatima'
-exemplo2 = 'Natiruts massa amuuuu muitoo tudo isso!'
+exemplo2 = 'euuu, kkkkkkkkkkk!!!!!! #EncontroFatima'
+exemplo3 = 'Natiruts massa amuuuu muitoo tudo isso!'
+exemplo4 = 'Natiruts rsrsrsrs amuuuu muitoo tudo isso!'
 
-fixWords(exemplo1)
-fixWords(exemplo2)
-'''
-            
+exemplo1 = lexicAnalyzer(exemplo1)
+exemplo2 = lexicAnalyzer(exemplo2)
+exemplo3 = lexicAnalyzer(exemplo3)
+exemplo4 = lexicAnalyzer(exemplo4)
+
+print exemplo1
+print exemplo2     
+print exemplo3     
+print exemplo4     
+  
+  
 #tweet = '22/11/2013 - 10:51:57 - @futuro: coisa boa assistir #EncontroFatima amo d+'
 
 #formatted = extractFormattedTweet(tweet)
