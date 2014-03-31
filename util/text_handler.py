@@ -1,6 +1,7 @@
+#!/usr/bin/env python
+#coding: utf8 
 import collections
 import re
-
 # receives a tweet. Returns the body, head, text
 def extractFormattedTweet(tweet):
     tweet = tweet.rstrip()
@@ -31,7 +32,7 @@ def fixWords(text):
             
             words.append(match.group())
     
-    return text
+    return (text,words)
 
 def lexicAnalyzer(text):
     text = fixWords(text)
@@ -39,24 +40,32 @@ def lexicAnalyzer(text):
     text = text.replace('rs', 'risos')
     text = text.replace('tb', 'tbm')
     text = text.replace('td', 'tudo')
+    text = text.replace('tdu', 'tudo')
     text = text.replace('tdb', 'tudo bem')
     text = text.replace('hj', 'hoje')
+    text = text.replace('bunitu', 'bonito')
+    text = text.replace('bunito', 'bonito')
     return text
 
+'''
 exemplo1 = 'Encontro, amoooooooooooooooo!!!!!! #EncontroFatima'
 exemplo2 = 'euuu, kkkkkkkkkkk!!!!!! #EncontroFatima'
 exemplo3 = 'Natiruts massa amuuuu muitoo tudo isso!'
 exemplo4 = 'Natiruts rsrsrsrs amuuuu muitoo tudo isso!'
+exemplo5 = 'Rubens Daniel é a cara do #TheVoiceBrasil  canta muiiiito !!'
 
 exemplo1 = lexicAnalyzer(exemplo1)
 exemplo2 = lexicAnalyzer(exemplo2)
 exemplo3 = lexicAnalyzer(exemplo3)
 exemplo4 = lexicAnalyzer(exemplo4)
+exemplo5 = lexicAnalyzer(exemplo5)
 
 print exemplo1
 print exemplo2     
 print exemplo3     
 print exemplo4     
+print exemplo5     
+'''
   
   
 #tweet = '22/11/2013 - 10:51:57 - @futuro: coisa boa assistir #EncontroFatima amo d+'

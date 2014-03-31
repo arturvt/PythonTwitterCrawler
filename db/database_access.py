@@ -56,6 +56,27 @@ class DatabaseManager:
         self.cursor.execute(query)       
         return self.cursor.fetchall()
     
+    def getEPGEvent(self, channel_name, date, time):
+        query = """ 
+        SELECT 
+          epg_event.startdate, epg_event.starttime, epg_event.durationtime, broadcaster.name, broadcaster.language, program.name
+        FROM 
+          public.epg_event, 
+          public.program, 
+          public.broadcaster
+        WHERE 
+          program.program_id = epg_event.program AND broadcaster.id = program.broadcaster AND
+          broadcaster.name = '%s' AND
+          epg_event.startdate = '%s' AND
+          epg_event.starttime = '%s'
+        ORDER BY
+          epg_event.starttime     
+
+        """ %(channel_name, date,time)
+        self.cursor.execute(query)       
+        return self.cursor.fetchall()
+    
+    
     def getHashTagsPerProgram(self, program_name):
         query = """
         SELECT 
@@ -71,10 +92,11 @@ class DatabaseManager:
         """ %(program_name)
         self.cursor.execute(query)
         return self.cursor.fetchall()
-#data = DatabaseManager()
-#list_epg = data.filterEPGByChannelNameDateTime('GLOBO', '29/10/2013 - 16:00:00')
-#for epg in list_epg:
-#    print epg[0], epg[1], epg[2], epg[3], epg[4]
+    
+data = DatabaseManager()
+list_epg = data.filterEPGByChannelNameDateTime('GLOBO', '29/10/2013 - 16:00:00')
+for epg in list_epg:
+    print epg[0], epg[1], epg[2], epg[3], epg[4]
 #print "Qnt of programs for SBT: %d"  %(len(data.filterEPGByChannelName("SBT")))
 #print "Qnt of programs for Globo: %d"  %(len(data.filterEPGByChannelName("Globo")))
 #print "Qnt of programs for Rede Vida: %d"  %(len(data.filterEPGByChannelName("RedeVida")))

@@ -9,7 +9,7 @@ from datetime import timedelta, datetime
 class DateHandler():
     def __init__(self, timeInfo):
         self.timeInfo = timeInfo
-        self.dt = parse(timeInfo) - timedelta(hours=2) #adjusts to Brasilian Time -3 
+        self.dt = parse(timeInfo) - timedelta(hours=3) #adjusts to Brasilian Time -3 
      
     def getDate(self):
         year_str = str(self.dt.year)

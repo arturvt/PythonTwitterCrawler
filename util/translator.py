@@ -1,10 +1,13 @@
-#Code by http://denis.papathanasiou.org/2012/05/07/using-microsofts-translator-api-with-python/
-# Vem um XML, falta pegar o valor!
+#!/usr/bin/env python
+#coding: utf8 
+
 import json
 import requests
 import urllib
 import msmt
 
+#Code by http://denis.papathanasiou.org/2012/05/07/using-microsofts-translator-api-with-python/
+# Vem um XML, falta pegar o valor!
 
 from lxml import etree # http://lxml.de/tutorial.html VER AQUI
  
